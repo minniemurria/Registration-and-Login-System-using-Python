@@ -1,0 +1,141 @@
+f=open("database.txt","a")#creating a file
+
+#Registration
+def register():
+  print("****REGISTRATION****")
+  f=open("database.txt","r")
+  Username = input("Create a Username or email address: ")
+  Password = input("Create a Password: ")
+  Password1 = input("Confirm Password: ")
+
+  for line in open("database.txt","r").readlines():
+    login_info = line.split()
+    if Username==login_info[0]:
+      print("Username already exists, RESTART: "+"\n")
+      register()
+  import re
+  regex ='^[^0-9][a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'#emailaddress format
+  if Password != Password1:
+    print("Passwords don't match, RESTART:"+"\n")
+    register()
+  else:
+    if len(Password)<5: 
+      print("Password too short, length of Password must be more than or equal to 5, RESTART:"+"\n")
+      register()
+    elif len(Password)>16:
+      print("Password too long, length of Password must be less than or equal to 16: RESTART"+"\n")
+      register()
+    elif not re.search('[0-9]',Password):
+      print("Password must contain one digit, RESTART:"+"\n")
+      register()
+    elif not re.search('[A-Z]',Password):
+      print("Password must contain one uppercase character, RESTART:"+"\n")
+      register()
+    elif not re.search('[a-z]',Password):
+      print("Password must contain one lowercase character, RESTART:"+"\n")
+      register()
+    elif not re.search("['@', '#','!','~','$','%','^','&','*','(',',','-','+','/',':','.',',','<','>','?','|']",Password):
+      print("Password must contain one special character, RESTART:"+"\n")
+      register()
+    elif not re.search(regex, Username):
+      print("Invalid Email address"+"\n"+"Note: An Email address or username must be of format sherlock@gmail.com."+ "\n" +"It cannot start with numbers or special characters"+"\n"+"It cannot contain special characters, RESTART: "+"\n")
+      register()    
+    else:
+      f=open("database.txt","a")
+      f.write(Username+" "+Password+"\n")
+      print("****Congratulatins,You have been successfully registered****")
+
+
+
+#New password if forgotten
+def changepassword():
+  username1 = input("Please enter your username: ")
+  with open("database.txt","r") as file: 
+    line = file.readline()
+    while line:
+      login_info = line.split() 
+      if username1 == login_info[0]:
+        user_found = True
+        password2=input("Create a new password: ")
+        password21=input("Confirm new password: ")
+        import re
+        if password2 != password21:
+          print("Passwords don't match, RESTART:"+"\n")
+          changepassword()
+        else:
+          if len(password2)<5: 
+            print("Password too short, length of Password must be more than or equal to 5, RESTART:"+"\n")
+            changepassword()
+          elif len(password2)>16:
+            print("Password too long, length of Password must be less than or equal to 16: RESTART"+"\n")
+            changepassword()    
+          elif not re.search('[0-9]',password2):
+            print("Password must contain one digit, RESTART:"+"\n")
+            changepassword()
+          elif not re.search('[A-Z]',password2):
+            print("Password must contain one uppercase character, RESTART:"+"\n")
+            changepassword()
+          elif not re.search('[a-z]',password2):
+            print("Password must contain one lowercase character, RESTART:"+"\n")
+            changepassword()
+          elif not re.search("['@', '#','!','~','$','%','^','&','*','(',',','-','+','/',':','.',',','<','>','?','|']",password2):
+            print("Password must contain one special character, RESTART:"+"\n")
+            changepassword()
+          else:
+            with open("database.txt","r") as line:
+              data=line.read()
+              data = data.replace((login_info[0]+" "+login_info[1]+"\n"),(login_info[0]+" "+password2+"\n"))
+              with open("database.txt","w") as f:
+                f.write(data)
+                print("****New password has been created****")
+                return
+      else:
+        user_found = False
+        line = file.readline()
+      
+  if not user_found:
+    print("This Username doesnot exist, Register for a new account")
+    register()
+      
+                
+#login into the system
+def login():
+  print("****ENTER YOUR LOGIN DETAILS****")
+  username = input("Please enter your username: ")
+  password = input("Please enter your password: ")
+  with open("database.txt","r") as file: 
+    line = file.readline()
+    while line:
+      login_info = line.split() 
+      if username == login_info[0] and password == login_info[1]:
+        user_found = True
+        print("****You are now logged in****")
+        return
+      else:
+        user_found = False
+        line = file.readline()
+
+  if not user_found:
+    print("Either username or password incorrect")
+    c=input(">>If forgot Password press \'F'"+"\n"+">>To try logging again press \'L'"+"\n"+">>To go back for Registration press \'R':"+"\n")
+    if c=="f" or c=="F":
+      changepassword()
+    elif c=="r" or c=="R":
+      register()
+    elif c=="l" or c=="L":
+      login()
+  else:
+    print("****You are now logged in****")
+
+      
+
+def home():
+  choice=input("Press \'R' for registration or Press \'L' for login into the system: "+"\n")
+  if choice=="R" or choice=="r":
+    register()
+  elif choice =="L" or choice=="l":
+    login()
+home()
+
+
+  
